@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>City counter</title>
+</head>
+<body>
+  <h1>City counter</h1>
+
+  <form id="city-form">
+    <label for="letter">First letter:</label>
+    <input
+      id="letter"
+      type="text"
+      maxlength="1"
+      pattern="[A-Za-z]"
+      required
+    >
+    <button type="submit">Count cities</button>
+  </form>
+
+  <p id="result"></p>
+
+  <script>
+    const form = document.getElementById("city-form");
+    const input = document.getElementById("letter");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const originalLetter = input.value;
+
+      try {
+        const response = await fetch(
+          `/api/cities/count?letter=${originalLetter}`
+        );
+
+        if (!response.ok) {
+          result.textContent = "Request failed";
+          return;
+        }
+
+        const data = await response.json();
+
+        result.textContent = `Cities starting with "${originalLetter}": ${data.count}`;
+      } catch (error) {
+        result.textContent = "Something went wrong";
+      }
+    });
+  </script>
+</body>
+</html>
